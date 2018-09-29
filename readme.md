@@ -11,6 +11,7 @@ InfluxDB
 
 	pip install influxdb
 	pip install --upgrade influxdb
+<<<<<<< HEAD
 
 pyTelegraf
 
@@ -31,3 +32,5 @@ Start Telegraf
 Start the TeslaEnergyMonitor
 
 	python TeslaEnergyMonitor.py 
+=======
+>>>>>>> 5d8ecf1368007f240e28efe3ea3dde159862b96d
