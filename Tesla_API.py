@@ -3,10 +3,9 @@ import json
 import logging 
 import datetime
 import pprint
+import calendar
 
-logging.basicConfig(filename='./logs/Tesla.API.Connection.log', level=logging.INFO)
-
-
+logging.basicConfig(filename='./logs/Tesla_API_Connection.log', level=logging.INFO)
 
 class Connection():
     authenticationURL =  "https://owner-api.teslamotors.com/oauth/token"
@@ -16,6 +15,7 @@ class Connection():
     grantType = 'password'
     clientID = '' 
     clientSecret = ''
+    expiration = ''
 
     def __init__(self,
             email='',
@@ -35,16 +35,21 @@ class Connection():
                 'grant_type': self.grantType, 
                 'client_id': self.clientID, 
                 'client_secret': self.clientSecret}
-        try:
-            r = requests.post(self.authenticationURL, json=data)
-            if (r.status_code == 200):
-                data = r.json()
-                self.access_token = data["access_token"]
-                return self.access_token
-            else:
-                logging.error(str(datetime.datetime.now()) + '==> Connection.getAccessToken ==> Rest call returned wrong status code: ', + str(r.status_code))
-        except Exception as e:
-            logging.error(str(datetime.datetime.now()) + '==> Connection.getAccessToken ==> Rest call failed ' + str(e))
+        now = calendar.timegm(datetime.datetime.now().timetuple())
+        if (not self.expiration) or (now > self.expiration):  
+            try:
+                r = requests.post(self.authenticationURL, json=data)
+                if (r.status_code == 200):
+                    data = r.json()
+                    self.access_token = data["access_token"]
+                    self.expiration = data['created_at'] + data['expires_in'] - 86400
+                    return self.access_token
+                else:
+                    logging.error(str(datetime.datetime.now()) + '==> Connection.getAccessToken ==> Rest call returned wrong status code: ', + str(r.status_code))
+            except Exception as e:
+                logging.error(str(datetime.datetime.now()) + '==> Connection.getAccessToken ==> Rest call failed ' + str(e))
+        else: 
+            return self.access_token
 
     def getClientIDandSecret(self):
         try: 
@@ -88,11 +93,10 @@ class Vehicle():
         try:
             r = requests.get(self.chargeStateURL, headers=head)
             data = r.json()
+            batteryState['vehicleID'] = str(self.vehicleID)
             batteryState['batteryLevel'] = data['response']['battery_level']
             batteryState['batteryRange'] = data['response']['battery_range']
             batteryState['timeStamp']  = data['response']['timestamp']
+            return batteryState
         except Exception as e: 
-            logging.error(str(datetime.datetime.now()) + '==> Connection.getChargeState ==> Rest call failed' + str(e))
-
-
-
+            logging.error(str(datetime.datetime.now()) + '==> Connection.getBatteryState ==> Rest call failed : ' + str(e))
