@@ -7,15 +7,10 @@ import sys
 import logging
 import datetime
 
-logging.basicConfig(filename='./logs/tesla_API_config.log', level=logging.INFO)
-
 
 class TeslaAPIConfig(): 
+    logging.basicConfig(filename='./logs/tesla_API_config.log', level=logging.INFO)
     __vehicles = []  # contains all the log data that is aviable on disk
-
-    def __init__(self):
-        # first read in all the logFiles
-        self.__vehicles = self.load_vehicles()
 
     # This function read the logfiles in the folder /Logs and return 
     # a dictionary with the JSON data

@@ -5,10 +5,9 @@ import datetime
 import pprint
 import calendar
 
-logging.basicConfig(filename='./logs/TeslaAPIConnection.log', level=logging.INFO)
-
 
 class Connection():
+    logging.basicConfig(filename='./logs/tesla_API_connection.log', level=logging.INFO)
     __authentication_URL = "https://owner-api.teslamotors.com/oauth/token"
     __access_token = ''
     __email = ''
@@ -63,42 +62,3 @@ class Connection():
         except Exception as e:
             logging.error(str(datetime.datetime.now()) + '==> Connection.get_clientID_and_secret ==> Rest call failed ' + str(e))
 
-
-class Vehicle():
-    __vehicle_list_URL = "https://owner-api.teslamotors.com/api/1/vehicles"
-    __charge_state_URL = "https://owner-api.teslamotors.com/api/1/vehicles/vehicle_id/data_request/charge_state"
-    __vehicle_ID = '' 
-
-    def __init__(self, email, password):
-        _con = Connection(email, password)
-        self.__connection = _con
-        self.set_vehicleID()
-
-    # The API assumes there is only one Tesla on the account provided 
-    def set_vehicleID(self): 
-        head = {"Authorization": "Bearer %s" % self.__connection.get_access_token()}
-        if (not self.__vehicle_ID): 
-            try:
-                r = requests.get(self.__vehicle_list_URL, headers=head)
-                data = r.json()
-                self.__vehicle_ID = data['response'][0]['id']
-                logging.info(str(datetime.datetime.now()) + 
-                            '==> Vehicle.setVehicleID ==> Returned vehicleID: ' + 
-                            str(self.__vehicle_ID))
-            except Exception as e:
-                logging.error(str(datetime.datetime.now()) + '==> Connection.get_vehicle ==> Rest call failed' + str(e))
-        
-    def get_battery_state(self): 
-        self.__charge_state_URL = self.__charge_state_URL.replace('vehicle_id', str(self.__vehicle_ID))
-        battery_state = {}
-        head = {"Authorization": "Bearer %s" % self.__connection.get_access_token()}
-        try:
-            r = requests.get(self.__charge_state_URL, headers=head)
-            data = r.json()
-            battery_state['vehicleID'] = str(self.__vehicle_ID)
-            battery_state['batteryLevel'] = data['response']['battery_level']
-            battery_state['batteryRange'] = data['response']['battery_range']
-            battery_state['timeStamp'] = data['response']['timestamp']
-            return battery_state
-        except Exception as e: 
-            logging.error(str(datetime.datetime.now()) + '==> Connection.get_battery_state ==> Rest call failed : ' + str(e))

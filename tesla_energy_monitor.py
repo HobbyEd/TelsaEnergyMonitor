@@ -4,5 +4,5 @@ import time
 
 p = PersistTimeSeries.PersistTimeSeries()
 while True: 
-    p.persist_battery_level()
-    time.sleep(30)
+    p.persist_vehicles_state()
+    time.sleep(5)
