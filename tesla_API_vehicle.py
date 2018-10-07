@@ -12,7 +12,8 @@ class Vehicle():
     __vehicle_data_URL = "https://owner-api.teslamotors.com/api/1/vehicles/vehicle_id/data"
     __vehicle_ID = '' 
     __vehicle_data = {}
-
+    __miles_to_km = 1.609344
+    
     def __init__(self, email, password):
         _con = tesla_API_connection.Connection(email, password)
         self.__connection = _con
@@ -32,7 +33,7 @@ class Vehicle():
             except Exception as e:
                 logging.error(str(datetime.datetime.now()) + '==> Vehicle.set_vehicle ==> Rest call failed' + str(e))
 
-    def __get_vehicle_data(self):
+    def get_vehicle_data_from_tesla(self):
         self.__vehicle_data_URL = self.__vehicle_data_URL.replace('vehicle_id', str(self.__vehicle_ID))
         head = {"Authorization": "Bearer %s" % self.__connection.get_access_token()}
         try:
@@ -50,20 +51,27 @@ class Vehicle():
 
     def get_charge_state(self):
         if (not self.__vehicle_data):
-            self.__get_vehicle_data()
+            self.get_vehicle_data_from_tesla()
+        self.__vehicle_data['charge_state']['ideal_battery_range'] = self.__vehicle_data['charge_state']['ideal_battery_range'] * self.__miles_to_km
         return self.__vehicle_data['charge_state']
 
     def get_climate_state(self):
         if (not self.__vehicle_data):
-            self.__get_vehicle_data()
+            self.get_vehicle_data_from_tesla()
         return self.__vehicle_data['climate_state']
 
     def get_vehicle_state(self):
         if (not self.__vehicle_data):
-            self.__get_vehicle_data()
+            self.get_vehicle_data_from_tesla()
+        self.__vehicle_data['vehicle_state']['odometer'] = self.__vehicle_data['vehicle_state']['odometer'] * self.__miles_to_km
         return self.__vehicle_data['vehicle_state']
-    
+
     def get_vehicle_name(self):
         if (not self.__vehicle_data):
-            self.__get_vehicle_data()
+            self.get_vehicle_data_from_tesla()
         return self.__vehicle_data['display_name']
+    
+    def get_drive_state(self):
+        if (not self.__vehicle_data):
+            self.get_vehicle_data_from_tesla()
+        return self.__vehicle_data['drive_state']
