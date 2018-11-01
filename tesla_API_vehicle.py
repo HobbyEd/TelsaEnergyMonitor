@@ -53,6 +53,8 @@ class Vehicle():
         if (not self.__vehicle_data):
             self.get_vehicle_data_from_tesla()
         self.__vehicle_data['charge_state']['ideal_battery_range'] = self.__vehicle_data['charge_state']['ideal_battery_range'] * self.__miles_to_km
+        self.__vehicle_data['charge_state']['latitude'] = self.__vehicle_data['drive_state']['native_latitude']
+        self.__vehicle_data['charge_state']['longitude'] = self.__vehicle_data['drive_state']['native_longitude']
         return self.__vehicle_data['charge_state']
 
     def get_climate_state(self):

@@ -1,4 +1,5 @@
 from telegraf.client import TelegrafClient
+from geolib import geohash
 import tesla_API_vehicle
 import tesla_API_config
 import datetime
@@ -41,9 +42,12 @@ class PersistTimeSeries():
                                          tags={'vehicleID': str(vehicle.get_vehicleID()),
                                          'vehicle_name': vehicle.get_vehicle_name()})
             if (charge_state['charging_state'].upper() == 'Charging'.upper()):
+                location = geohash.encode(charge_state['latitude'], charge_state['longitude'], 7)
+                logging.info(str(datetime.datetime.now()) + '==> Charging on location: ' + location + ' with value : ' + str(charge_state['charge_energy_added']) )
                 self.__telegrafClient.metric('charge_energy_added', charge_state['charge_energy_added'], 
-                                             tags={'vehicleID': str(vehicle.get_vehicleID()),
-                                             'vehicle_name': vehicle.get_vehicle_name()})
+                                            tags={'vehicleID': str(vehicle.get_vehicleID()),
+                                            'vehicle_name': vehicle.get_vehicle_name(), 
+                                            'location': location})
         except Exception as e: 
             logging.error(str(datetime.datetime.now()) + '==> PersistTimeSeries.__persist_charge_state ==> failed ' + str(e))
 

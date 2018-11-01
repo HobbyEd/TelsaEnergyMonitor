@@ -5,4 +5,4 @@ import time
 p = PersistTimeSeries.PersistTimeSeries()
 while True: 
     p.persist_vehicles_state()
-    time.sleep(15)
+    time.sleep(100)

@@ -3,6 +3,10 @@
 # Dependencies 
 This module uses: 
 
+GeoHash
+
+	pip install geolib
+
 Request
 
 	pip install request
