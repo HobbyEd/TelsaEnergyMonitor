@@ -38,10 +38,13 @@ class Vehicle():
         head = {"Authorization": "Bearer %s" % self.__connection.get_access_token()}
         try:
             r = requests.get(self.__vehicle_data_URL, headers=head)
-            data = r.json()
-            self.__vehicle_data = data['response']
+            if (r.status_code == 200):
+                data = r.json()
+                self.__vehicle_data = data['response']
+            else: 
+                logging.info(str(datetime.datetime.now()) + '==> Connection.get_vehicle_data_form_tesla wrong return type of rest call: ' + str(r.status.code))
         except Exception as e: 
-            logging.error(str(datetime.datetime.now()) + '==> Connection.get_vehicle_data ==> Rest call failed : ' + str(e))
+            logging.error(str(datetime.datetime.now()) + '==> Connection.get_vehicle_data_data_form_tesla ==> Rest call failed : ' + str(e))
 
     def get_vehicleID(self):
         if (self.__vehicle_ID):
