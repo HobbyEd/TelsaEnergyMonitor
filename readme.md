@@ -1,4 +1,5 @@
-# Energy Monitor for Tesla cars
+# Energy Monitor for devices in house. 
+This energy monitor can read data from a Tesla car and the PlugWise Smile P1 device. 
 
 # Dependencies 
 This module uses: 
@@ -10,6 +11,10 @@ GeoHash
 Request
 
 	pip install request
+
+XmlToDict
+
+	pip install xmltodict
 
 InfluxDB
 
@@ -33,6 +38,6 @@ Start influxd deamon
 
 Start Telegraf
 
-Start the TeslaEnergyMonitor
+Start the EnergyMonitor
 
-	python TeslaEnergyMonitor.py 
+	python EnergyMonitor.py 

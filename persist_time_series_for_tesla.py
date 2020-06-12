@@ -9,7 +9,7 @@ import json
 import datetime 
 
 
-class PersistTimeSeries(): 
+class PersistTimeSeriesForTesla(): 
     logging.basicConfig(filename='./logs/persist_time_series.log', level=logging.INFO)
     __vehicles = []
     __telegrafClient = '' 

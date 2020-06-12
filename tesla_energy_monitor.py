@@ -1,8 +1,8 @@
-import persist_time_series as PersistTimeSeries
+import persist_time_series_for_tesla as persist_tesla
 import time 
 
 
-p = PersistTimeSeries.PersistTimeSeries()
+p = persist_tesla.PersistTimeSeriesForTesla()
 while True: 
     p.persist_vehicles_state()
     time.sleep(100)
